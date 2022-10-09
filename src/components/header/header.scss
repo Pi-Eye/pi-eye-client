@@ -1,0 +1,57 @@
+@use "../../constants.scss" as theme;
+
+$header-height: 50px;
+
+.header_container {
+  height: $header-height;
+  position: relative;
+  background-color: theme.$blue;
+  box-shadow: 1px 0px 5px 1px #000000;
+}
+
+#header_logo_container {
+  height: $header-height;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-color: white;
+  overflow: hidden;
+}
+
+#header_logo {
+  height: $header-height;
+}
+
+#nav_bar {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.nav_button {
+  border-style: none;
+  background-color: transparent;
+  padding: 10px;
+  height: $header-height;
+}
+
+.nav_button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav_button:active {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.nav_button_icon {
+  height: 100%;
+}
+
+#header-logo-text {
+  margin: 0;
+  padding: 0;
+  color: white;
+  font-size: 36px;
+  width: fit-content;
+  margin-left: $header-height + 10px;
+}

@@ -1,0 +1,52 @@
+@use "../../constants.scss" as theme;
+
+.login_focus {
+  z-index: 10;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login_container {
+  color: white;
+  border-radius: 2px;
+  padding: 30px;
+  background-color: theme.$dark-blue;
+  text-align: left;
+}
+
+#login_header {
+  text-align: center;
+  margin: 10px 0px;
+}
+
+.login_container input {
+  width: 200px;
+  padding: 10px;
+  margin: 10px 0px;
+  border-style: none;
+  border-radius: 2px;
+}
+
+#login_submit_button {
+  float: right;
+  width: 50px;
+  background-color: theme.$light-blue;
+  color: white;
+  border-style: none;
+  border-radius: 2px;
+}
+
+#login_submit_button:hover {
+  background-color: theme.$blue;
+}
+
+#login_submit_button:active {
+  background-color: theme.$dark-blue;
+}

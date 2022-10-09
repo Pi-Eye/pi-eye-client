@@ -1,0 +1,11 @@
+@use "../../constants.scss" as theme;
+
+#camera_container {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  width: 100%;
+  padding: 30px;
+  margin: 0;
+  box-sizing: border-box;
+}

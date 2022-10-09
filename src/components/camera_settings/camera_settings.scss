@@ -1,0 +1,132 @@
+@use "../../constants.scss" as theme;
+
+.camera_settings_focus {
+  z-index: 10;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: scroll;
+}
+
+.camera_settings_container {
+  color: white;
+  border-radius: 2px;
+  padding: 30px;
+  background-color: theme.$dark-blue;
+  text-align: left;
+  max-height: calc(100vh - 100px);
+  overflow: scroll;
+}
+
+#camera_settings_header {
+  text-align: left;
+  margin: 10px 0px;
+  width: calc(100% - 60px);
+}
+
+.camera_settings_container input,
+.camera_settings_container select {
+  padding: 5px;
+  margin: 10px 0px;
+  border-style: none;
+  border-radius: 2px;
+  background-color: theme.$light-blue;
+  color: white;
+}
+
+#camera_settings_submit_button {
+  font-size: 16px;
+  float: right;
+  padding: 10px;
+  background-color: theme.$light-blue;
+  color: white;
+  border-style: none;
+  border-radius: 2px;
+}
+
+#camera_settings_submit_button:hover {
+  background-color: theme.$blue;
+}
+
+#camera_settings_submit_button:active {
+  background-color: theme.$dark-blue;
+}
+
+#camera_settings_close {
+  font-size: 16px;
+  float: right;
+  padding: 10px;
+  background-color: theme.$light-blue;
+  color: white;
+  border-style: none;
+  border-radius: 2px;
+}
+
+#camera_settings_close:hover {
+  background-color: theme.$blue;
+}
+
+#camera_settings_close:active {
+  background-color: theme.$dark-blue;
+}
+
+.number_input {
+  width: 50px;
+  margin-right: 10px !important;
+}
+
+.text_input {
+  width: 200px;
+}
+
+.select_input {
+  margin-right: 10px !important;
+}
+
+#min_changed_pixels {
+  width: 60px;
+}
+
+#settings_loading {
+  position: fixed;
+  z-index: 100;
+  background-color: rgb(0,0,0,0.5);
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-items: center;
+  color: white;
+  text-align: center;
+}
+
+#settings_loading p {
+  width: 100%;
+}
+
+#camera_settings_delete_button {
+  margin: 10px 0px;
+  font-size: 16px;
+  float: left;
+  padding: 10px;
+  background-color: #a8322b;
+  color: white;
+  border-style: none;
+  border-radius: 2px;
+}
+
+#camera_settings_delete_button:hover {
+  background-color: #b9433c;
+}
+
+#camera_settings_delete_button:active {
+  background-color: #ca544d;
+}

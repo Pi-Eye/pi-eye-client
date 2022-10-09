@@ -1,0 +1,12 @@
+@use "./constants.scss" as theme;
+
+@use "./components/footer/footer.scss" as footer;
+
+.App {
+  background-color: theme.$dark-blue;
+  min-height: 100vh;
+  padding: 0px 0px footer.$footer-height 0px;
+  text-align: center;
+  position: relative;
+
+}

@@ -1,0 +1,38 @@
+@use "../../constants.scss" as theme;
+
+$footer-height: 200px;
+
+.footer_container {
+  height: $footer-height;
+  position: absolute;
+  background-color: theme.$blue;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  color: white;
+  display: flex;
+  justify-content: center;
+}
+
+.footer_right {
+  text-align: left;
+  margin: 20px 5px;
+  min-width: 100px;
+  width: 300px;
+}
+
+.footer_left {
+  text-align: left;
+  margin: 20px 5px;
+  min-width: 100px;
+  width: 300px;
+
+}
+
+.footer_container a {
+  color: theme.$grey;
+}
+
+.footer_container a:hover {
+  color: theme.$light-grey;
+}

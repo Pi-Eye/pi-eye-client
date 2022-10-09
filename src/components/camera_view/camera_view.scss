@@ -1,0 +1,79 @@
+@use "../../constants.scss" as theme;
+
+$header-height: 50px;
+
+.camera_view_container {
+  position: relative;
+  background-color: theme.$blue;
+  border-radius: 5px;
+  padding: $header-height 0px 0px 0px;
+  min-width: 300px;
+  width: 600px;
+  margin: 0px 10px;
+  box-shadow: 1px 1px 5px #000000;
+}
+
+.latency_view {
+  font-size: 18px;
+  background-color: rgba(0, 0, 0, 0.50);
+  padding: 2px;
+  border-radius: 5px;
+  margin: 0px;
+  position: absolute;
+  top: $header-height + 5px;
+  right: 5px;
+  color: white;
+  width: fit-content;
+}
+
+.camera_stream {
+  width: calc(100% - 8px);
+  border-style: solid;
+  border-width: 2px;
+  border-color: theme.$blue;
+  margin: 0px;
+}
+
+.motion {
+  border-style: solid;
+  border-width: 2px;
+  border-color: white;
+}
+
+.camera_view_buttons {
+  width: 100%;
+  margin: 0px;
+  padding: 0px;
+}
+
+.camera_view_cam_name {
+  margin: 0px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: white;
+  padding: 10px;
+  font-size: 24px;
+}
+
+.camera_view_settings_button {
+  position: absolute;
+  right: 0;
+  top: 0;
+  border-style: none;
+  background-color: transparent;
+  padding: 10px;
+  height: $header-height;
+}
+
+.camera_view_settings_button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.camera_view_settings_button:active {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.camera_view_settings_icon {
+  height: 100%;
+}
