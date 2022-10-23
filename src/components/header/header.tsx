@@ -1,11 +1,12 @@
 import React from "react";
 import "./header.scss";
 import Cookies from "js-cookie";
+import ServerSettings from "../server_settings/server_settings"
 
 type HeaderProps = {}
 
 type HeaderState = {
-  sockets_wanted: Array<string>
+  settings_open: boolean
 };
 
 class Header extends React.Component<HeaderProps, HeaderState> {
@@ -14,8 +15,11 @@ class Header extends React.Component<HeaderProps, HeaderState> {
     super(props);
 
     this.state = {
-      sockets_wanted: ["ws://10.194.158.90:8080"]
+      settings_open: false
     };
+
+    this.OpenSettings = this.OpenSettings.bind(this);
+    this.CloseSettings = this.CloseSettings.bind(this);
   }
 
   componentDidMount(): void {
@@ -30,20 +34,29 @@ class Header extends React.Component<HeaderProps, HeaderState> {
     window.location.reload();
   }
 
-  SettingsButton(): void {
-    console.log("settings");
+  OpenSettings(): void {
+    this.setState({ settings_open: true });
+  }
+
+  CloseSettings(): void {
+    this.setState({ settings_open: false });
   }
 
   render() {
+    let settings;
+    if (this.state.settings_open) {
+      settings = (<ServerSettings close_handler={this.CloseSettings}></ServerSettings>)
+    }
     return (
       <header className="header_container">
+        {settings}
         <div id="header_logo_container">
           <img id="header_logo" src="/Pi-Eye_logo.svg" alt="logo"></img>
         </div>
         <p id="header-logo-text">Pi-Eye</p>
 
         <nav id="nav_bar">
-          <button className="nav_button" onClick={this.SettingsButton}>
+          <button className="nav_button" onClick={this.OpenSettings}>
             <img className="nav_button_icon" id="nav_settings_icon" src="/icons/settings-icon.png" alt="Pi Eye Settings"></img>
           </button>
           <button className="nav_button" onClick={this.LogoutButton}>

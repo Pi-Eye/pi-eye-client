@@ -15,6 +15,7 @@ class CameraContainer extends React.Component<CameraContainerProps, CameraContai
   private web_client_: WebClient;
   private socket_address_: string;
 
+
   constructor(props: CameraContainerProps) {
     super(props);
 
@@ -29,7 +30,7 @@ class CameraContainer extends React.Component<CameraContainerProps, CameraContai
       sockets_wanted[this.state.sockets_wanted[i]] = i;
     }
 
-    fetch("http://10.195.189.222:8000/socket_address")
+    fetch("/socket_address")
       .then((res) => res.json())
       .then((data) => {
         this.socket_address_ = data.socket_address;
@@ -52,7 +53,7 @@ class CameraContainer extends React.Component<CameraContainerProps, CameraContai
   }
 
   componentDidMount(): void {
-    fetch("http://localhost:8000/list_cameras", {
+    fetch("/list_cameras", {
       method: "POST",
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -63,15 +64,19 @@ class CameraContainer extends React.Component<CameraContainerProps, CameraContai
         if (data.success) {
           this.setState({
             sockets_wanted: JSON.parse(data.addresses)
+          }, () => {
+            console.log(this.state);
+            this.StartSocket();
           });
-          this.StartSocket();
         } else {
           console.log("Error Fetching Cameras");
+          alert("Error Fetching Cameras");
         }
       })
       .catch((error) => {
         console.log(error);
         console.log("Error Fetching Cameras");
+        alert("Error Fetching Cameras");
       });
   }
 
@@ -85,7 +90,7 @@ class CameraContainer extends React.Component<CameraContainerProps, CameraContai
         {
           this.state.sockets_wanted.map((socket_name, key) => {
             return (
-              <CameraView show_latency={true} socket_name={socket_name} key="1232334"></CameraView>
+              <CameraView socket_name={socket_name} key={key}></CameraView>
             );
           })
         }

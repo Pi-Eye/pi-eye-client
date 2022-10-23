@@ -8,7 +8,6 @@ const NO_SIGNAL_IMG = "/icons/no-camera-icon.png";
 
 type CameraViewProps = {
   socket_name: string,
-  show_latency: boolean
 };
 
 type CameraViewState = {
@@ -17,7 +16,8 @@ type CameraViewState = {
   last_img_src: string,
   img_src: string
   cam_name: string,
-  show_settings: boolean
+  show_settings: boolean,
+  show_latency: boolean
 }
 
 class CameraView extends React.Component<CameraViewProps, CameraViewState> {
@@ -57,14 +57,22 @@ class CameraView extends React.Component<CameraViewProps, CameraViewState> {
       img_src: NO_SIGNAL_IMG,
       last_img_src: "",
       cam_name: "Camera",
-      show_settings: false
+      show_settings: false,
+      show_latency: false
     };
 
     this.openSettings = this.openSettings.bind(this);
     this.closeSettings = this.closeSettings.bind(this);
+    this.ToggleLatency = this.ToggleLatency.bind(this);
   }
 
-  StartStream() {
+  ToggleLatency() {
+    this.setState({
+      show_latency: !this.state.show_latency
+    })
+  }
+
+  StartStream(fps: number) {
     window.addEventListener(this.props.socket_name, this.handle_frame);
 
     this.update_latency_ = setInterval(() => {
@@ -107,7 +115,7 @@ class CameraView extends React.Component<CameraViewProps, CameraViewState> {
         img_src: window.URL.createObjectURL(new Blob([this.next_frame_.frame])),
         motion: this.next_frame_.motion
       });
-    }, 16); /////////////////////////////////////////////////// temp (use calculation later)
+    }, 1000 / fps);
   }
 
   openSettings() {
@@ -123,7 +131,7 @@ class CameraView extends React.Component<CameraViewProps, CameraViewState> {
   }
 
   componentDidMount(): void {
-    fetch("http://10.195.189.222:8000/camera_settings", {
+    fetch("/camera_name", {
       method: "POST",
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -134,19 +142,15 @@ class CameraView extends React.Component<CameraViewProps, CameraViewState> {
       .then((data) => {
         if (data.success) {
           try {
-            this.settings_ = JSON.parse(data.settings);
-
-            if (this.settings_.text) {
-              this.setState({
-                cam_name: this.settings_.text.cam_name as string
-              });
-            }
+            this.setState({
+              cam_name: data.name as string
+            });
           } catch (error) {
             console.log(error);
             alert(`Failed to fetch camera data for: ${this.props.socket_name}`);
             return;
           }
-          this.StartStream();
+          this.StartStream(data.fps);
         }
         else {
           alert(`Failed to fetch camera data for: ${this.props.socket_name}`);
@@ -168,14 +172,15 @@ class CameraView extends React.Component<CameraViewProps, CameraViewState> {
   render() {
     let settings;
     if (this.state.show_settings) settings = <CameraSettings address={this.props.socket_name} settings={JSON.stringify(this.settings_)} close_handler={this.closeSettings}></CameraSettings>
-    const video_class = (this.state.motion && this.props.show_latency) ? "camera_stream motion" : "camera_stream";
+    const video_class = (this.state.motion) ? "camera_stream motion" : "camera_stream";
     let latency_view;
-    if (this.props.show_latency) latency_view = <p className="latency_view">{Math.round(this.state.latency)} ms</p>;
+    if (this.state.show_latency) latency_view = <p className="latency_view">{Math.round(this.state.latency)} ms</p>;
     return (
       <div className="camera_view_container">
         {settings}
         <div className="camera_view_buttons">
           <p className="camera_view_cam_name">{this.state.cam_name}</p>
+          <button onClick={this.ToggleLatency} className={this.state.show_latency ? "camera_view_show_latency_button toggled" : "camera_view_show_latency_button"}>Show Latency</button>
           <button className="camera_view_settings_button" onClick={this.openSettings}>
             <img className="camera_view_settings_icon" src="/icons/settings-icon.png" alt="Camera Settings"></img>
           </button>

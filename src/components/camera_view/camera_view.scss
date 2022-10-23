@@ -77,3 +77,26 @@ $header-height: 50px;
 .camera_view_settings_icon {
   height: 100%;
 }
+
+.camera_view_show_latency_button {
+  position: absolute;
+  right: 50px;
+  top: 0;
+  border-style: none;
+  background-color: transparent;
+  padding: 10px;
+  height: $header-height;
+  color: white
+}
+
+.toggled {
+  background-color: rgba(0, 255, 0, 0.1);
+}
+
+.camera_view_show_latency_button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.camera_view_show_latency_button:active {
+  background-color: rgba(255, 255, 255, 0.2);
+}

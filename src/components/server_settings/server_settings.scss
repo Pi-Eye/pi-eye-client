@@ -1,0 +1,170 @@
+@use "../../constants.scss" as theme;
+
+.server_settings_focus {
+  z-index: 10;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: scroll;
+}
+
+.server_settings_container {
+  color: white;
+  border-radius: 2px;
+  padding: 30px;
+  background-color: theme.$dark-blue;
+  text-align: left;
+  max-height: 70vh;
+  overflow: scroll;
+  overscroll-behavior: none;
+}
+
+#server_settings_header {
+  text-align: left;
+  margin: 10px 0px;
+  width: calc(100% - 60px);
+}
+
+.server_settings_container input,
+.server_settings_container select {
+  padding: 5px;
+  margin: 10px 0px;
+  border-style: none;
+  border-radius: 2px;
+  background-color: theme.$light-blue;
+  color: white;
+}
+
+#server_settings_submit_button {
+  font-size: 16px;
+  float: right;
+  padding: 10px;
+  background-color: theme.$light-blue;
+  color: white;
+  border-style: none;
+  border-radius: 2px;
+}
+
+#server_settings_submit_button:hover {
+  background-color: theme.$blue;
+}
+
+#server_settings_submit_button:active {
+  background-color: theme.$dark-blue;
+}
+
+#server_settings_close {
+  font-size: 16px;
+  float: right;
+  padding: 10px;
+  background-color: theme.$light-blue;
+  color: white;
+  border-style: none;
+  border-radius: 2px;
+}
+
+#server_settings_close:hover {
+  background-color: theme.$blue;
+}
+
+#server_settings_close:active {
+  background-color: theme.$dark-blue;
+}
+
+.number_input {
+  width: 50px;
+  margin-right: 10px !important;
+}
+
+.text_input {
+  width: 100%;
+}
+
+.select_input {
+  margin-right: 10px !important;
+}
+
+#min_changed_pixels {
+  width: 60px;
+}
+
+#settings_loading {
+  position: fixed;
+  z-index: 100;
+  background-color: rgb(0, 0, 0, 0.5);
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-items: center;
+  color: white;
+  text-align: center;
+}
+
+#settings_loading p {
+  background-color: theme.$dark-blue;
+  padding: 20px;
+  border-radius: 2px;
+  margin: auto;
+}
+
+#server_settings_delete_button {
+  margin: 10px 0px;
+  font-size: 16px;
+  float: left;
+  padding: 10px;
+  background-color: #a8322b;
+  color: white;
+  border-style: none;
+  border-radius: 2px;
+}
+
+#server_settings_delete_button:hover {
+  background-color: #b9433c;
+}
+
+#server_settings_delete_button:active {
+  background-color: #ca544d;
+}
+
+.user_container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.user_display {
+  max-width: 350px;
+  margin-right: 30px;
+  justify-self: flex-start;
+}
+
+.delete_user_button {
+  height: fit-content;
+  margin: 10px 0px;
+  margin-left: auto;
+  font-size: 16px;
+  justify-self: flex-end;
+  padding: 10px;
+  background-color: #a8322b;
+  color: white;
+  border-style: none;
+  border-radius: 2px;
+}
+
+.delete_user_button:hover {
+  background-color: #b9433c;
+}
+
+.delete_user_button:active {
+  background-color: #ca544d;
+}

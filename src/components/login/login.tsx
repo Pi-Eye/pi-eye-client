@@ -28,7 +28,7 @@ class Login extends React.Component<LoginProps, LoginState> {
   componentDidMount(): void {
     const auth_cookie = Cookies.get("auth");
     if (auth_cookie) {
-      fetch("http://localhost:8000/cookie", {
+      fetch("/cookie", {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -59,7 +59,7 @@ class Login extends React.Component<LoginProps, LoginState> {
   handleSubmit(event: any) {
     event.preventDefault();
 
-    fetch("http://localhost:8000/login", {
+    fetch("/login", {
       method: "POST",
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
