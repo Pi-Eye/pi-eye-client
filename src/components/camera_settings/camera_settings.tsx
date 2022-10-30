@@ -47,8 +47,32 @@ type CameraSettingsState = {
   min_pixel_diff?: number,
   min_changed_pixels?: number,
   motion_fps_scale?: number,
+  start_trigger?: number,
+  start_trigger_length?: number,
+  stop_timeout?: number,
   device_type?: number,
-  device_selection?: number
+  device_selection?: number,
+  from_email?: string;
+  mail_host?: string;
+  mail_port?: number;
+  mail_user?: string;
+  mail_pass?: string;
+  emails?: string;
+  files?: Array<{
+    id?: number,
+    frame_rate_scale?: number;
+    name_format?: string;
+    delete_after?: number;
+    save_dir?: string;
+    vid_length?: number,
+    on_motion?: boolean
+  }>,
+  frame_rate_scale?: number;
+  name_format?: string;
+  delete_after?: number;
+  save_dir?: string;
+  vid_length?: number,
+  on_motion?: boolean
 }
 
 class CameraSettings extends React.Component<CameraSettingsProps, CameraSettingsState> {
@@ -57,8 +81,15 @@ class CameraSettings extends React.Component<CameraSettingsProps, CameraSettings
 
     this.state = {
       loading: false,
-      has_settings: false,
-      pwd: ""
+      has_settings: true,
+      pwd: "",
+
+      frame_rate_scale: 1,
+      name_format: "{NAME} {DATE} {TIME}",
+      delete_after: 3600000,
+      save_dir: "",
+      vid_length: 60000,
+      on_motion: true
     }
 
     this.pwdHandler = this.pwdHandler.bind(this);
@@ -93,8 +124,26 @@ class CameraSettings extends React.Component<CameraSettingsProps, CameraSettings
     this.min_pixel_diffHandler = this.min_pixel_diffHandler.bind(this);
     this.min_changed_pixelsHandler = this.min_changed_pixelsHandler.bind(this);
     this.motion_fps_scaleHandler = this.motion_fps_scaleHandler.bind(this);
+    this.start_triggerHandler = this.start_triggerHandler.bind(this);
+    this.start_trigger_lengthHandler = this.start_trigger_lengthHandler.bind(this);
+    this.stop_timeoutHandler = this.stop_timeoutHandler.bind(this);
     this.device_typeHandler = this.device_typeHandler.bind(this);
     this.device_selectionHandler = this.device_selectionHandler.bind(this);
+    this.from_emailHandler = this.from_emailHandler.bind(this)
+    this.mail_hostHandler = this.mail_hostHandler.bind(this)
+    this.mail_portHandler = this.mail_portHandler.bind(this)
+    this.mail_userHandler = this.mail_userHandler.bind(this)
+    this.mail_passHandler = this.mail_passHandler.bind(this)
+    this.emailsHandler = this.emailsHandler.bind(this)
+
+    this.frame_rate_scaleHandler = this.frame_rate_scaleHandler.bind(this);
+    this.name_formatHandler = this.name_formatHandler.bind(this);
+    this.delete_afterHandler = this.delete_afterHandler.bind(this);
+    this.save_dirHandler = this.save_dirHandler.bind(this);
+    this.vid_lengthHandler = this.vid_lengthHandler.bind(this);
+    this.on_motionHandler = this.on_motionHandler.bind(this);
+    this.filesHandler = this.filesHandler.bind(this);
+    this.filesDelete = this.filesDelete.bind(this);
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
@@ -113,7 +162,7 @@ class CameraSettings extends React.Component<CameraSettingsProps, CameraSettings
         if (data.success) {
           try {
             const settings = JSON.parse(data.settings);
-            console.log(settings);
+
             this.setState({
               loading: false,
               has_settings: true,
@@ -151,17 +200,28 @@ class CameraSettings extends React.Component<CameraSettingsProps, CameraSettings
               min_pixel_diff: settings.motion.min_pixel_diff,
               min_changed_pixels: settings.motion.min_changed_pixels,
               motion_fps_scale: settings.motion.motion_fps_scale,
+              start_trigger: settings.motion.start_trigger,
+              start_trigger_length: settings.motion.start_trigger_length,
+              stop_timeout: settings.motion.stop_timeout,
               device_type: settings.device.device_type,
-              device_selection: settings.device.device_choice
+              device_selection: settings.device.device_choice,
+              from_email: settings.notifications.from_email,
+              mail_host: settings.notifications.mail_host,
+              mail_port: settings.notifications.mail_port,
+              mail_user: settings.notifications.mail_user,
+              mail_pass: settings.notifications.mail_pass,
+              emails: settings.notifications.emails,
+              files: settings.files
             });
           } catch (error) {
-            console.log(error);
+            alert("Error fetching camera settings")
             return;
           }
         }
       })
       .catch((error) => {
         console.log(error);
+        alert("Error fetching camera settings")
       });
   }
 
@@ -196,8 +256,69 @@ class CameraSettings extends React.Component<CameraSettingsProps, CameraSettings
   min_pixel_diffHandler(event: any) { this.setState({ min_pixel_diff: parseInt(event.target.value) }); }
   min_changed_pixelsHandler(event: any) { this.setState({ min_changed_pixels: parseFloat(event.target.value) }); }
   motion_fps_scaleHandler(event: any) { this.setState({ motion_fps_scale: parseInt(event.target.value) }); }
+  start_triggerHandler(event: any) { this.setState({ start_trigger: parseInt(event.target.value) }); }
+  start_trigger_lengthHandler(event: any) { this.setState({ start_trigger_length: parseInt(event.target.value) }); }
+  stop_timeoutHandler(event: any) { this.setState({ stop_timeout: parseInt(event.target.value) }); }
   device_typeHandler(event: any) { this.setState({ device_type: parseInt(event.target.value) }); }
   device_selectionHandler(event: any) { this.setState({ device_selection: parseInt(event.target.value) }); }
+  from_emailHandler(event: any) { this.setState({ from_email: event.target.value }); }
+  mail_hostHandler(event: any) { this.setState({ mail_host: event.target.value }); }
+  mail_portHandler(event: any) { this.setState({ mail_port: event.target.value }); }
+  mail_userHandler(event: any) { this.setState({ mail_user: event.target.value }); }
+  mail_passHandler(event: any) { this.setState({ mail_pass: event.target.value }); }
+  emailsHandler(event: any) { this.setState({ emails: event.target.value }); }
+
+  filesHandler(event: any) {
+    event.preventDefault();
+    const files = this.state.files;
+    if (!files) return;
+    let max = 0;
+    for (let i = 0; i < files.length; i++) {
+      if (max < parseInt(files[i].id as any)) {
+        max = parseInt(files[i].id as any);
+      }
+    }
+
+    const motion = this.state.on_motion?.toString() === "true";
+
+    files.push({
+      id: max + 1,
+      frame_rate_scale: this.state.frame_rate_scale,
+      name_format: this.state.name_format,
+      delete_after: this.state.delete_after,
+      save_dir: this.state.save_dir,
+      vid_length: this.state.vid_length,
+      on_motion: motion
+    });
+
+    this.setState({ files }, () => {
+      this.Submit();
+    });
+  }
+
+  filesDelete(event: any) {
+    event.preventDefault();
+
+    const files = this.state.files;
+    if (!files) return;
+    for (let i = 0; i < files.length; i++) {
+      if (files[i].id === parseInt(event.target.id)) {
+        files.splice(i, 1);
+        break;
+      }
+    }
+    this.setState({ files }, () => {
+      this.Submit();
+    });
+  }
+
+  frame_rate_scaleHandler(event: any) { this.setState({ frame_rate_scale: event.target.value }); }
+  name_formatHandler(event: any) { this.setState({ name_format: event.target.value }); }
+  delete_afterHandler(event: any) { this.setState({ delete_after: event.target.value }); }
+  save_dirHandler(event: any) { this.setState({ save_dir: event.target.value }); }
+  vid_lengthHandler(event: any) { this.setState({ vid_length: event.target.value }); }
+  on_motionHandler(event: any) { this.setState({ on_motion: event.target.value }); }
+
 
   handleSubmitPassword(event: any) {
     event.preventDefault();
@@ -225,20 +346,18 @@ class CameraSettings extends React.Component<CameraSettingsProps, CameraSettings
             window.addEventListener(this.props.address, wait)
           }, 1000);
         } else {
-          this.setState({ loading: false })
+          this.setState({ loading: false });
           console.log("Error Setting New Settings");
         }
       })
       .catch((error) => {
+        this.setState({ loading: false });
         console.log(error);
-        this.setState({ loading: false })
         console.log("Error Setting New Settings");
       });
   }
 
-  handleSubmit(event: any) {
-    event.preventDefault();
-
+  Submit() {
     const settings: AllSettings = {
       camera: {
         width: parseInt(this.state.width as any),
@@ -278,11 +397,23 @@ class CameraSettings extends React.Component<CameraSettingsProps, CameraSettings
         min_pixel_diff: parseInt(this.state.min_pixel_diff as any),
         min_changed_pixels: parseFloat(this.state.min_changed_pixels as any),
         motion_fps_scale: parseFloat(this.state.motion_fps_scale as any),
+        start_trigger: parseFloat(this.state.start_trigger as any),
+        start_trigger_length: parseInt(this.state.start_trigger_length as any),
+        stop_timeout: parseInt(this.state.stop_timeout as any)
       },
       device: {
         device_type: parseInt(this.state.device_type as any),
         device_choice: parseInt(this.state.device_selection as any)
-      }
+      },
+      notifications: {
+        from_email: this.state.from_email as any,
+        mail_host: this.state.mail_host as any,
+        mail_port: this.state.mail_port as any,
+        mail_user: this.state.mail_user as any,
+        mail_pass: this.state.mail_pass as any,
+        emails: this.state.emails as any,
+      },
+      files: this.state.files as any
     }
 
     this.setState({ loading: true })
@@ -319,6 +450,12 @@ class CameraSettings extends React.Component<CameraSettingsProps, CameraSettings
       });
   }
 
+  handleSubmit(event: any) {
+    event.preventDefault();
+
+    this.Submit();
+  }
+
   handleDelete() {
     this.setState({ loading: true })
 
@@ -351,6 +488,26 @@ class CameraSettings extends React.Component<CameraSettingsProps, CameraSettings
     if (this.state.loading) {
       loading = <div id="settings_loading"><p>Saving Settings...</p></div>
     }
+    let recordings;
+    if (this.state.files) {
+      recordings = <div>{this.state.files.map((file, key) => {
+        return <div key={key}>
+          <div className="file_container">
+            <div className="file_display">
+              <p><b>Filename Format:</b> {file.name_format}</p>
+              <p><b>Files Directory:</b> {file.save_dir}</p>
+              <p><b>Max Video Length:</b> {file.vid_length} ms</p>
+              <p><b>Delete After:</b> {file.delete_after} ms</p>
+              <p><b>Record Video:</b> {(file.on_motion && file.on_motion.toString() === "true") ? "On Motion" : "Continuously"}</p>
+              <p><b>Save Every: </b> {file.frame_rate_scale} frame(s)</p>
+            </div>
+            <button id={file.id?.toString()} className="delete_file_button" onClick={this.filesDelete}>Delete</button>
+          </div>
+          <hr></hr>
+        </div>
+      })}
+      </div>
+    }
     let form = <div><h3>Failed to Fetch Settings.</h3><p>Is the Camera connected?<br></br>Do you have permission to edit camera settings?</p></div>;
     if (this.state.has_settings) {
       form = <div>
@@ -368,10 +525,9 @@ class CameraSettings extends React.Component<CameraSettingsProps, CameraSettings
           <h3>Basic Camera</h3>
           <label>Width: <input onChange={this.widthHandler} value={this.state.width} className="number_input" type="number" min="1"></input></label>
           <label>Height: <input onChange={this.heightHandler} value={this.state.height} className="number_input" type="number" min="1"></input></label>
-          <label>FPS: <input onChange={this.fpsHandler} value={this.state.fps} className="number_input" type="number" min="1" max="60"></input></label>
+          <label>FPS: <input onChange={this.fpsHandler} value={this.state.fps} className="number_input" type="number" min="1"></input></label>
           <br></br>
-          <hr></hr>
-
+          <br></br>
           <h3>Text Settings</h3>
           <label>Camera Name: <input onChange={this.cam_nameHandler} value={this.state.cam_name} className="text_input" type="text"></input></label>
           <br></br>
@@ -381,8 +537,7 @@ class CameraSettings extends React.Component<CameraSettingsProps, CameraSettings
           </select></label>
           <label> Font Size: <input onChange={this.font_sizeHandler} value={this.state.font_size} className="number_input" type="number" min="1"></input></label>
           <br></br>
-          <hr></hr>
-
+          <br></br>
           <h3>Motion Detection Settings</h3>
           <label>Gaussian Size: <input onChange={this.gaussian_sizeHandler} value={this.state.gaussian_size} className="number_input" type="number" min="1"></input></label>
           <label>Scale Amount: <input onChange={this.scale_denominatorHandler} value={this.state.scale_denominator} className="number_input" type="number" min="1"></input></label>
@@ -395,8 +550,15 @@ class CameraSettings extends React.Component<CameraSettingsProps, CameraSettings
           <br></br>
           <label>Minimum Changed Pixels: <input onChange={this.min_changed_pixelsHandler} value={this.state.min_changed_pixels} className="number_input" type="number" min="0" max="1" step="0.001" id="min_changed_pixels"></input></label>
           <br></br>
-          <hr></hr>
-
+          <label>
+            <input onChange={this.start_triggerHandler} value={this.state.start_trigger} className="number_input" type="number" min="0" max="1" step="0.001" id="min_changed_pixels"></input>
+            percent of &nbsp;&nbsp;
+            <input onChange={this.start_trigger_lengthHandler} value={this.state.start_trigger_length} className="number_input" type="number" min="1" id="min_changed_pixels"></input>
+            frames to trigger</label>
+          <br></br>
+          <label>Motion ends after &nbsp;&nbsp;<input onChange={this.stop_timeoutHandler} value={this.state.stop_timeout} className="number_input" type="number" min="1" id="min_changed_pixels"></input> frames of no motion</label>
+          <br></br>
+          <br></br>
           <h3>Device Settings</h3>
           <label>Device Type: <select onChange={this.device_typeHandler} value={this.state.device_type} className="select_input">
             <option value="2">Specific</option>
@@ -405,8 +567,24 @@ class CameraSettings extends React.Component<CameraSettingsProps, CameraSettings
           </select></label>
           <label>Device Id: <input onChange={this.device_selectionHandler} value={this.state.device_selection} className="number_input" type="number" min="0"></input></label>
           <br></br>
-          <hr></hr>
-
+          <br></br>
+          <h3>Notification Settings</h3>
+          <label>Send From Email: <input onChange={this.from_emailHandler} value={this.state.from_email} className="text_input" type="text"></input></label>
+          <br></br>
+          <label>Email Server Hostname: <input onChange={this.mail_hostHandler} value={this.state.mail_host} className="text_input" type="text"></input></label>
+          <br></br>
+          <label>Email Server Host Port: <input onChange={this.mail_portHandler} value={this.state.mail_port} className="number_input" type="number"></input></label>
+          <br></br>
+          <br></br>
+          <label>Email Server Username: <input onChange={this.mail_userHandler} value={this.state.mail_user} className="text_input" type="text"></input></label>
+          <br></br>
+          <label>Email Server Password: <input onChange={this.mail_passHandler} value={this.state.mail_pass} className="text_input" type="password"></input></label>
+          <br></br>
+          <label>Send To (Comma Seperated List):
+            <textarea onChange={this.emailsHandler} value={this.state.emails} className="textarea_input" placeholder="email1@example.com, email2@example.com"></textarea>
+          </label>
+          <br></br>
+          <br></br>
           <h3>Advanced Camera Settings</h3>
           <label>Rotation: <select onChange={this.rotationHandler} value={this.state.rotation} className="select_input">
             <option value="0">0</option>
@@ -420,8 +598,6 @@ class CameraSettings extends React.Component<CameraSettingsProps, CameraSettings
             <option value="vertical">Vertical</option>
             <option value="both">Both</option>
           </select></label>
-
-
           <br></br>
           <label>Quality: <input onChange={this.qualityHandler} value={this.state.quality} className="number_input" type="number" min="1" max="100"></input></label>
           <label>Bitrate (Mbps): <input onChange={this.bitRateHandler} value={this.state.bitRate} className="number_input" type="number" min="1" max="25"></input></label>
@@ -480,6 +656,35 @@ class CameraSettings extends React.Component<CameraSettingsProps, CameraSettings
           <br></br>
 
           <input type="submit" value="Save" id="camera_settings_submit_button"></input>
+        </form>
+        <br></br>
+        <br></br>
+        <br></br>
+        <hr></hr>
+        <h3>Recording Settings</h3>
+        {recordings}
+        <form onSubmit={this.filesHandler}>
+          <h3>Add Recording Method</h3>
+          <label>Filename Format: <input required onChange={this.name_formatHandler} value={this.state.name_format} className="text_input" type="text" placeholder="{NAME} {DATE} {TIME} -> 'CamName 2022-01-01 00:00:00.mp4'"></input></label>
+          <br></br>
+          <label>Files Directory: <input required onChange={this.save_dirHandler} value={this.state.save_dir} className="text_input" type="text"></input></label>
+          <br></br>
+          <label>Max Video Length (ms): <input required onChange={this.vid_lengthHandler} value={this.state.vid_length} className="number_input" type="number" min="1000" id="vid_length"></input></label>
+          <br></br>
+          <label>Delete Video After (ms): <input required onChange={this.delete_afterHandler} value={this.state.delete_after} className="number_input" type="number" min="1000" id="vid_length"></input></label>
+          <br></br>
+          <label>Record Video: <select required onChange={this.on_motionHandler} value={(this.state.on_motion && (this.state.on_motion.toString() === "true")) ? "true" : "false"} className="select_input">
+            <option value="true">On Motion</option>
+            <option value="false">Continuously</option>
+          </select></label>
+          <br></br>
+          <label>Record Every: &nbsp;&nbsp;<input required onChange={this.frame_rate_scaleHandler} value={this.state.frame_rate_scale} className="number_input" type="number" min="1"></input> frame(s)</label>
+          <br></br>
+          <input type="submit" value="Add" id="camera_settings_submit_button"></input>
+          <br></br>
+          <br></br>
+          <br></br>
+          <hr></hr>
         </form>
       </div>
     }

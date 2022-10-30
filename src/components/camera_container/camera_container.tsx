@@ -47,6 +47,7 @@ class CameraContainer extends React.Component<CameraContainerProps, CameraContai
       })
       .catch((error) => {
         console.log(error.message);
+        alert("Failed to fetch websocket address")
       })
 
 
@@ -65,12 +66,8 @@ class CameraContainer extends React.Component<CameraContainerProps, CameraContai
           this.setState({
             sockets_wanted: JSON.parse(data.addresses)
           }, () => {
-            console.log(this.state);
             this.StartSocket();
           });
-        } else {
-          console.log("Error Fetching Cameras");
-          alert("Error Fetching Cameras");
         }
       })
       .catch((error) => {
@@ -87,6 +84,7 @@ class CameraContainer extends React.Component<CameraContainerProps, CameraContai
   render() {
     return (
       <div id="camera_container">
+        <h1 id="camera_container_header">Camera Streams</h1>
         {
           this.state.sockets_wanted.map((socket_name, key) => {
             return (

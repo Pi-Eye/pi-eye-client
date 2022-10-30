@@ -86,7 +86,9 @@ $header-height: 50px;
   background-color: transparent;
   padding: 10px;
   height: $header-height;
-  color: white
+  color: white;
+  text-align: center;
+  width: 110px;
 }
 
 .toggled {

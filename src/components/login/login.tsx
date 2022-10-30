@@ -78,6 +78,7 @@ class Login extends React.Component<LoginProps, LoginState> {
       })
       .catch((error) => {
         console.log(error);
+        alert("Error logging in");
       });
   }
 

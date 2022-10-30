@@ -3,7 +3,10 @@ import "./header.scss";
 import Cookies from "js-cookie";
 import ServerSettings from "../server_settings/server_settings"
 
-type HeaderProps = {}
+type HeaderProps = {
+  SwitchView: () => void;
+  other_view_name: string;
+}
 
 type HeaderState = {
   settings_open: boolean
@@ -30,7 +33,6 @@ class Header extends React.Component<HeaderProps, HeaderState> {
 
   LogoutButton(): void {
     Cookies.remove("auth");
-    console.log("logout");
     window.location.reload();
   }
 

@@ -188,7 +188,7 @@ class ServerSettings extends React.Component<ServerSettingsProps, ServerSettings
           <hr></hr>
           <h3>Add Camera</h3>
           <label>Address:<br></br>
-            <input onChange={this.handleAddress} type="text" className="text_input"  placeholder="ex: ws://127.0.0.1:8080"></input>
+            <input onChange={this.handleAddress} type="text" className="text_input" placeholder="ex: ws://127.0.0.1:8080"></input>
           </label>
           <br></br>
           <label>Password:<br></br>
@@ -225,7 +225,7 @@ class ServerSettings extends React.Component<ServerSettingsProps, ServerSettings
             <input onChange={this.handlePwd} type="password" className="text_input"></input>
           </label>
           <br></br>
-          <label>Account Permissions: <select onChange={this.handlePermissions}  className="select_input">
+          <label>Account Permissions: <select onChange={this.handlePermissions} className="select_input">
             <option value="0">View Streams</option>
             <option value="1">View Streams, Edit Camera Settings</option>
             <option value="2">View Streams, Edit Server and Camera Settings</option>
@@ -233,17 +233,19 @@ class ServerSettings extends React.Component<ServerSettingsProps, ServerSettings
           <br></br>
           <input type="submit" value="Add Account" id="server_settings_submit_button"></input>
         </form>
+        <br></br>
+        <br></br>
       </div>
     }
     return (
-      <div className="server_settings_focus" >
+      <div className="server_settings_focus">
         {loading}
-        < div className="server_settings_container" >
+        <div className="server_settings_container">
           <button id="server_settings_close" onClick={this.props.close_handler}>Close</button>
           <h2 id="server_settings_header">Server Settings</h2>
           {settings}
         </div>
-      </div >
+      </div>
     );
   }
 }

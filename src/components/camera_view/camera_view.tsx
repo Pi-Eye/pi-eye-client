@@ -180,14 +180,14 @@ class CameraView extends React.Component<CameraViewProps, CameraViewState> {
         {settings}
         <div className="camera_view_buttons">
           <p className="camera_view_cam_name">{this.state.cam_name}</p>
-          <button onClick={this.ToggleLatency} className={this.state.show_latency ? "camera_view_show_latency_button toggled" : "camera_view_show_latency_button"}>Show Latency</button>
+          <button onClick={this.ToggleLatency} className={this.state.show_latency ? "camera_view_show_latency_button toggled" : "camera_view_show_latency_button"}>{this.state.show_latency ? "Hide Latency" : "Show Latency"}</button>
           <button className="camera_view_settings_button" onClick={this.openSettings}>
             <img className="camera_view_settings_icon" src="/icons/settings-icon.png" alt="Camera Settings"></img>
           </button>
         </div>
         {latency_view}
         <img className={video_class} src={this.state.img_src} alt="Camera Video"></img>
-      </div >
+      </div>
     );
   }
 }
