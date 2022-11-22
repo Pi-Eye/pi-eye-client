@@ -81,7 +81,7 @@ class CameraSettings extends React.Component<CameraSettingsProps, CameraSettings
 
     this.state = {
       loading: false,
-      has_settings: true,
+      has_settings: false,
       pwd: "",
 
       frame_rate_scale: 1,
