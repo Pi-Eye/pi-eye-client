@@ -256,7 +256,7 @@ class CameraSettings extends React.Component<CameraSettingsProps, CameraSettings
   min_pixel_diffHandler(event: any) { this.setState({ min_pixel_diff: parseInt(event.target.value) }); }
   min_changed_pixelsHandler(event: any) { this.setState({ min_changed_pixels: parseFloat(event.target.value) }); }
   motion_fps_scaleHandler(event: any) { this.setState({ motion_fps_scale: parseInt(event.target.value) }); }
-  start_triggerHandler(event: any) { this.setState({ start_trigger: parseInt(event.target.value) }); }
+  start_triggerHandler(event: any) { this.setState({ start_trigger: parseFloat(event.target.value) }); }
   start_trigger_lengthHandler(event: any) { this.setState({ start_trigger_length: parseInt(event.target.value) }); }
   stop_timeoutHandler(event: any) { this.setState({ stop_timeout: parseInt(event.target.value) }); }
   device_typeHandler(event: any) { this.setState({ device_type: parseInt(event.target.value) }); }
